@@ -1,0 +1,5 @@
+interface:
+  display_name: "Personal Memory Workflow"
+  short_description: "Maintain durable personal memory workflows"
+  default_prompt: "Use $personal-memory-workflow to decide what to write, retrieve, verify, or skill-ify in my memory repo."
+
