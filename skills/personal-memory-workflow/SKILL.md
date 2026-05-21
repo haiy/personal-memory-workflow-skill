@@ -16,13 +16,17 @@ These paths can be adapted per user or overridden through environment variables:
 - Project memories: `docs/projects/<project>/project-memory.md`
 - Skills: `skills/<skill-name>/SKILL.md`
 - Environment memories: `environment/memories/<name>/memory.md`
+- Chat rules: this skill's `references/chat-rules.md`, or a customized copy in the memory repo.
 - Task artifacts: `environment/tasks/` or ignored artifact directories, with summaries in docs.
 
 If the request is about live status, newest data, prices, repo state, service health, running processes, or online links, treat memory as routing guidance only and verify current facts with tools.
 
 ## Start Of Task
 
-1. If the memory repo has a communication-rule lookup script, run it for the latest user request.
+1. Run chat-rule lookup for the latest user request when available:
+   ```bash
+   python3 ~/.codex/skills/personal-memory-workflow/scripts/rule_lookup.py "<latest user request>" --topic "<short topic>"
+   ```
 2. Check the real workspace state before editing:
    ```bash
    git -C "${MEMORY_REPO:-$HOME/mem}" status --short --branch
@@ -52,6 +56,19 @@ Keep durable memory short, factual, and actionable:
 6. For larger changes, stage only relevant files and create a local commit when consistent with user instructions.
 
 Avoid storing raw secrets, full chat transcripts, noisy logs, large CSV/JSONL files, virtual environments, dependencies, databases, downloaded media, or generated build output.
+
+## Chat Rule Pattern
+
+Use chat rules for stable interaction behavior, not project facts.
+
+1. Edit the `Rule Index` first: rule id, keywords, short trigger, and action.
+2. Keep the rule body short and operational.
+3. If a rule applies only to one project, write it to that project memory instead.
+4. If a rule implies a repeated workflow, also update or create a skill.
+5. After editing, test lookup:
+   ```bash
+   python3 ~/.codex/skills/personal-memory-workflow/scripts/rule_lookup.py "user-like test query" --topic "topic"
+   ```
 
 ## Retrieval Pattern
 
@@ -87,4 +104,4 @@ When you finish a memory task, report:
 ## References
 
 - `references/memory-workflow-baseline.md`: distilled baseline for personal memory workflows.
-
+- `references/chat-rules.md`: starter chat rules and rule maintenance pattern.

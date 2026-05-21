@@ -21,6 +21,7 @@ The memory system is not a chat backup. It is a long-term work system for reduci
 ## Effective Defaults
 
 - Long-lived preferences and repeated corrections should become rules or skill instructions.
+- Chat rules should be indexed first, then expanded only when the rule body is needed.
 - Long reports and visual artifacts should usually become Markdown or HTML, with links when published.
 - Repeated procedures should become scripts, skills, or runbooks.
 - For local status, service status, Git status, current data, and online links, verify live state before concluding.
@@ -34,3 +35,12 @@ Verification answers "is it true right now?"
 
 Do both when the answer depends on live state.
 
+## Codex Global Hook
+
+For Codex, the memory workflow becomes reliable when a short global instruction tells the agent to:
+
+1. Use a private memory repo for durable context.
+2. Run chat-rule lookup at the start of each task.
+3. Update chat rules when the user corrects defaults.
+4. Verify live facts rather than trusting memory.
+5. Keep secrets and bulky raw artifacts out of long-term memory.

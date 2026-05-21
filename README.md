@@ -72,6 +72,35 @@
 - 不靠模型“凭印象”复述旧事实。
 - 也不把所有历史都塞进上下文，制造旧主题污染。
 
+## Chat Rules：把纠偏变成可执行规则
+
+`chat rules` 是最轻的一层 memory。它不记录项目事实，而是记录稳定的协作方式。
+
+适合写成 chat rule 的内容包括：
+
+- “以后默认这样”
+- “不要每次都问，直接做”
+- “报告必须给链接”
+- “页面交付要验证能打开”
+- “最新状态必须查 live”
+- “这种流程要做成 skill”
+
+仓库里带了一个 starter：
+
+```text
+skills/personal-memory-workflow/references/chat-rules.md
+```
+
+查询脚本：
+
+```bash
+python3 ~/.codex/skills/personal-memory-workflow/scripts/rule_lookup.py \
+  "把这个流程做成 skill，以后默认这样" \
+  --topic "memory workflow"
+```
+
+维护规则时先改顶部 `Rule Index`，再补规则正文。这样 agent 开局只需要读轻量索引，命中后再读具体规则。
+
 ## 实际效果
 
 这套工作流带来的变化很直接：
@@ -115,6 +144,34 @@
 ./skills/personal-memory-workflow/scripts/install.sh --copy
 ```
 
+## Codex 全局设定
+
+安装 skill 只是第一步。要让它在每次 Codex 任务开始时生效，需要把它接到 Codex 全局说明里。
+
+创建或更新：
+
+```text
+~/.codex/AGENTS.md
+```
+
+推荐加入：
+
+```markdown
+- Use `~/mem` or `$MEMORY_REPO` as the private long-term memory repo.
+- For complex tasks, write a short task log into the memory repo.
+- Maintain `docs/projects/<project>/project-memory.md` for durable project context.
+- Convert repeated workflows into installable skills under `skills/<skill-name>/`.
+- At the start of each task, run the chat-rule lookup if available:
+  `python3 ~/.codex/skills/personal-memory-workflow/scripts/rule_lookup.py "<latest user request>" --topic "<short topic>"`
+- If the user corrects a default or says "always do this", update chat rules first, then the relevant project memory or skill.
+- Treat memory as routing guidance, not proof of current state. Recheck live facts, services, links, Git status, and current data.
+- Do not store secrets, credentials, full transcripts, databases, or bulky raw exports in long-term memory.
+```
+
+更完整的步骤见：
+
+[Codex Global Setup](docs/codex-global-setup.md)
+
 ## 配置自己的 memory repo
 
 默认约定可以通过环境变量覆盖：
@@ -136,4 +193,3 @@ export MEMORY_SKILLS_DIR="$HOME/.codex/skills"
 - 不绑定某一个私人服务域名。
 
 真正落地时，建议在自己的 private memory repo 中维护项目记忆、任务日志和环境记忆；公开仓库只保留通用方法、skill 模板和可分享的文章。
-

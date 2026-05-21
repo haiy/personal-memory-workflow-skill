@@ -72,6 +72,43 @@ AI agent 真正难的不是“这一次回答得聪明”，而是下一次还�
 
 这样做以后，agent 不再靠印象猜，也不会把所有历史塞进上下文。
 
+## Chat rules 是 memory 的前门
+
+我后来发现，很多“记忆问题”其实不是知识问题，而是协作默认问题。
+
+比如：
+
+- 报告要给链接。
+- 复杂任务要写日志。
+- 页面交付要验证。
+- 最新状态要重新查。
+- 用户说“以后默认这样”时，要把它写进规则。
+
+这些不应该散落在项目文档里。它们更适合成为 chat rules。
+
+chat rules 的设计要很轻：顶部有一个 Rule Index，列出关键词、触发场景和动作。每次任务开始，agent 先查这个轻量索引；只有命中时，才加载对应规则正文。
+
+这样既能让偏好长期生效，又不会把一整本“行为手册”塞进上下文。
+
+## Codex 需要一个全局入口
+
+如果只是把 skill 放在目录里，它还不算真正进入工作流。真正关键的是 Codex 的全局设定。
+
+我会在 `~/.codex/AGENTS.md` 里放一段很短的全局说明：
+
+```markdown
+- Use `~/mem` or `$MEMORY_REPO` as the private long-term memory repo.
+- For complex tasks, write a short task log into the memory repo.
+- Maintain `docs/projects/<project>/project-memory.md` for durable project context.
+- Convert repeated workflows into installable skills under `skills/<skill-name>/`.
+- At the start of each task, run chat-rule lookup if available.
+- If the user corrects a default, update chat rules first.
+- Treat memory as routing guidance, not proof of current state.
+- Do not store secrets, full transcripts, databases, or bulky raw exports in long-term memory.
+```
+
+这一步的意义很大：它让 memory 不再是“想起来才用的工具”，而是每次任务启动时的固定动作。
+
 ## 真实效果
 
 这套方法最明显的效果，是我不再需要反复讲“默认怎么做”。
@@ -107,6 +144,8 @@ export MEMORY_REPO="$HOME/mem"
 
 然后让 agent 在 memory 相关任务里使用这个 skill。
 
+完整的 Codex 全局设定步骤见仓库里的 `docs/codex-global-setup.md`。
+
 ## 最后一条原则
 
 我现在最常用的一句话是：
@@ -114,4 +153,3 @@ export MEMORY_REPO="$HOME/mem"
 > Memory 负责少走回头路，事实检查负责现在到底是不是这样。
 
 只要坚持这个边界，memory 就不会变成负担，而会变成 agent 真正开始“长期协作”的基础设施。
-
